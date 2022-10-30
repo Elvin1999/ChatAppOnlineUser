@@ -1,5 +1,4 @@
 using ChatApp.Entities;
-using ChatApp.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +10,7 @@ builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<CustomIdentityDbContext>(options =>
 {
-    options.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ChatDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+    options.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ChatDbNew;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
 });
 
 builder.Services.AddIdentity<CustomIdentityUser, CustomIdentityRole>()
@@ -39,6 +38,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHub<ChatHub>("/chatHub");
+//app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

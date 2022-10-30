@@ -1,8 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model HomeViewModel
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class=col-md-11>
+    </div>
+    <div class=col-md-1>
+        <a href="/account/logout" class="btn btn-primary">Log Out</a>
+    </div>
 </div>
+
+<div>
+    <h2>@ViewBag.User.UserName</h2>
+    <img src="/images/@ViewBag.User.ImageUrl" style="border-radius:50%;width:50px;height:50px;" />
+</div>
+<div class="container">
+    <div class="row">&nbsp;</div>
+
+    <div class="row">
+        <div class="col-2">Message</div>
+        <div class="col-4"><input type="text" id="messageInput" /></div>
+    </div>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <ul id="messagesList"></ul>
+    </div>
+</div>
+
+<div class="row">
+    <div id="allUsers" class="col-md-10">
+
+    @foreach (var user in Model.AllUsers)
+    {
+            <div class="card" style="width: 14rem;">
+               
+                   
+              @if(user.IsOnline){
+                <img style="border:5px solid green;" class="card-img-top" src="~/images/@user.ImageUrl" alt="Card image cap">
+
+              }
+              else{
+                <img style="border:5px solid red;" class="card-img-top" src="~/images/@user.ImageUrl" alt="Card image cap">
+
+              }
+            <div class="card-body">
+                <h5 class="card-title">@user.UserName</h5>
+                <p class="card-text">@user.Email</p>
+                <a href="/home/FindCurrentUser/@user.Id" class="btn btn-primary">Send</a>
+            </div>
+        </div>
+    }
+    </div>
+     <div id="activeUsers" class="col-md-2">
+    </div>
+</div>
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+<script src="~/js/site.js"></script>

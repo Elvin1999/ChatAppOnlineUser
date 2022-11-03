@@ -46,5 +46,22 @@ namespace ChatApp.Controllers
         }
 
 
+
+        public async Task<IActionResult> FindCurrentUser(string id)
+        {
+            UserHelper.ReceiverUser = _userManager.Users.FirstOrDefault(u => u.Id == id);
+            return RedirectToAction("MessageChat");
+        }
+
+        public IActionResult MessageChat()
+        {
+            var model = new ChatModel
+            {
+                ReceiverUser = UserHelper.ReceiverUser,
+                SenderUser = UserHelper.CurrentUser
+            };
+            return View(model);
+        }
+
     }
 }

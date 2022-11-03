@@ -16,6 +16,14 @@ namespace ChatApp.Hubs
             this.httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task SendMessage(string user,string message)
+        {
+            var currentUser = UserHelper.CurrentUser;
+            var userId = UserHelper.ReceiverUser.Id;
+
+            await Clients.User(userId).SendAsync("ReceiveMessage",UserHelper.CurrentUser,message);
+        }
+
         public override async Task OnConnectedAsync()
         {
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);

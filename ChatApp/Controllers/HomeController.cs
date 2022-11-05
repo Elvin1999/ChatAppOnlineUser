@@ -63,5 +63,27 @@ namespace ChatApp.Controllers
             return View(model);
         }
 
+
+        public async Task<IActionResult> GetAllActiveUsers()
+        {
+            return Ok(UserHelper.ActiveUsers.DistinctBy(u => u.Id));
+        }
+
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var user=await _userManager.GetUserAsync(HttpContext.User);
+            var users=_userManager.Users.Where(u => u.Id != user.Id);
+            foreach (var item in users)
+            {
+                var onlineUser = UserHelper.ActiveUsers.FirstOrDefault(u => u.Id == item.Id);
+                if (onlineUser != null)
+                {
+                    item.IsOnline = true;
+                }
+            }
+            return Ok(users);
+        }
+
+
     }
 }

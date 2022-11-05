@@ -101,6 +101,8 @@ namespace ChatApp.Controllers
 
         public async Task<IActionResult> LogOut()
         {
+            var user = _userManager.GetUserAsync(HttpContext.User);
+           
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
         }

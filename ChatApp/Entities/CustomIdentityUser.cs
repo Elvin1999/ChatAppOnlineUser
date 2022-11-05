@@ -11,6 +11,7 @@ namespace ChatApp.Entities
         public virtual ICollection<Message> Messages { get; set; }
         public string ImageUrl { get; set; }
         public bool IsOnline { get; set; }
+        public DateTime DisConnectTime { get; set; } = DateTime.Now;
 
     }
 }

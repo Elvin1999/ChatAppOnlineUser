@@ -22,13 +22,13 @@ connection.on("Connect", function (info) {
 
     var li = document.createElement("li");
     document.getElementById("messagesList").appendChild(li);
-    li.innerHTML = `<span style='color:green;'>${info}</span>`;
+   // li.innerHTML = `<span style='color:green;'>${info}</span>`;
 });
 connection.on("Disconnect", function (info) {
 
     var li = document.createElement("li");
     document.getElementById("messagesList").appendChild(li);
-    li.innerHTML = `<span style='color:red;'>${info}</span>`;
+   // li.innerHTML = `<span style='color:red;'>${info}</span>`;
   ////  location.reload();
 
 });

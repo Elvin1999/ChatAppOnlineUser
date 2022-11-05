@@ -29,7 +29,7 @@ namespace ChatApp.Hubs
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
             UserHelper.ActiveUsers.Add(user);
             string info = user.UserName + " connected Succesfully";
-            await Clients.Others.SendAsync("Connect",info);
+            await Clients.Others.SendAsync("Connect","");
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -39,9 +39,11 @@ namespace ChatApp.Hubs
             if (userRemoved != null)
             {
                 UserHelper.ActiveUsers.RemoveAll(u => u.Id == userRemoved.Id);
-
+                var disconnectedUser=userManager.Users.FirstOrDefault(u => u.Id == userRemoved.Id);
+                disconnectedUser.DisConnectTime = DateTime.Now;
+                await userManager.UpdateAsync(disconnectedUser);
                 string info = user.UserName + " disconnected";
-                await Clients.Others.SendAsync("Disconnect", info);
+                await Clients.Others.SendAsync("Disconnect", "");
             }
         }
     }

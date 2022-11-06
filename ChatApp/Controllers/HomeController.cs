@@ -33,7 +33,7 @@ namespace ChatApp.Controllers
             foreach (var item in users)
             {
                 var onlineUser = UserHelper.ActiveUsers.FirstOrDefault(u => u.Id == item.Id);
-                if(onlineUser != null)
+                if (onlineUser != null)
                 {
                     item.IsOnline = true;
                 }
@@ -42,7 +42,7 @@ namespace ChatApp.Controllers
             var model = new HomeViewModel
             {
                 AllUsers = users,
-                ActiveUsers=UserHelper.ActiveUsers
+                ActiveUsers = UserHelper.ActiveUsers
             };
             return View(model);
         }
@@ -73,8 +73,8 @@ namespace ChatApp.Controllers
 
         public async Task<IActionResult> GetAllUsers()
         {
-            var user=await _userManager.GetUserAsync(HttpContext.User);
-            var users=_userManager.Users.Where(u => u.Id != user.Id);
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var users = _userManager.Users.Where(u => u.Id != user.Id);
             foreach (var item in users)
             {
                 var onlineUser = UserHelper.ActiveUsers.FirstOrDefault(u => u.Id == item.Id);
@@ -88,27 +88,28 @@ namespace ChatApp.Controllers
 
         public async Task<IActionResult> SendFollow(string id)
         {
-            var sender = UserHelper.CurrentUser;
-            var user = _userManager.Users.FirstOrDefault(u => u.Id == id);
-            if (user != null)
+            var sender = await _userManager.GetUserAsync(HttpContext.User);
+            var receiveruser = _userManager.Users.FirstOrDefault(u => u.Id == id);
+            if (receiveruser != null)
             {
-                user.FriendRequests.Add(new FriendRequest
+                receiveruser.FriendRequests.Add(new FriendRequest
                 {
-                     Content=$"{sender.UserName} send friend Request at {DateTime.Now.ToLongDateString()}",
-                      SenderId = sender.Id,
-                       CustomIdentityUser = sender
+                    Content = $"{sender.UserName} send friend Request at {DateTime.Now.ToLongDateString()}",
+                    SenderId = sender.Id,
+                    CustomIdentityUser = sender
                 });
 
-                await _userManager.UpdateAsync(user);
+                await _userManager.UpdateAsync(receiveruser);
             }
             return Ok();
         }
 
         public async Task<IActionResult> GetAllRequests()
         {
-            var current = UserHelper.CurrentUser;
-            var currentUser = _context.Users.Include(nameof(CustomIdentityUser.FriendRequests)).FirstOrDefault(u => u.Id == current.Id);
-            var items = currentUser.FriendRequests;
+            var current = await _userManager.GetUserAsync(HttpContext.User);
+            var users = _context.Users.Include(nameof(CustomIdentityUser.FriendRequests));
+            var user = users.FirstOrDefault(u => u.Id == current.Id);
+            var items = user.FriendRequests.Where(r => r.SenderId != user.Id);
             return Ok(items);
         }
 

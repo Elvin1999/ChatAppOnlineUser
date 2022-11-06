@@ -137,11 +137,9 @@ function GetUsers() {
                 console.log(err);
             }
         });
-
-    }, 1000);
-    setInterval(function () {
         GetRequests();
-    }, 4000);
+    }, 1000);
+   
 }
 
 function GetRequests() {

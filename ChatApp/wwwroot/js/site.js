@@ -154,9 +154,9 @@ function GetRequests() {
             for (var i = 0; i < data.length; i++) {
                 let item = `<div class="card" style="width: 15rem;">
   <div class="card-body">
-    <h5 class="card-title">Friend Request</h5>
+    <h5 class="card-title">Friend Request </h5>
   </div>
-  <ul class="list-group list-group-flush">
+  <ul class="list-group list-group-flush"> 
     <li class="list-group-item">${data[i].content}</li>
   </ul>
   <div class="card-body">

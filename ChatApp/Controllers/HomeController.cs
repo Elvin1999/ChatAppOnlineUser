@@ -4,6 +4,7 @@ using ChatApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace ChatApp.Controllers
@@ -13,11 +14,12 @@ namespace ChatApp.Controllers
     {
         private UserManager<CustomIdentityUser> _userManager;
         private IHttpContextAccessor _httpContextAccessor;
-
-        public HomeController(UserManager<CustomIdentityUser> userManager, IHttpContextAccessor httpContextAccessor)
+        private CustomIdentityDbContext _context;
+        public HomeController(UserManager<CustomIdentityUser> userManager, IHttpContextAccessor httpContextAccessor, CustomIdentityDbContext context)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
@@ -84,6 +86,31 @@ namespace ChatApp.Controllers
             return Ok(users);
         }
 
+        public async Task<IActionResult> SendFollow(string id)
+        {
+            var sender = UserHelper.CurrentUser;
+            var user = _userManager.Users.FirstOrDefault(u => u.Id == id);
+            if (user != null)
+            {
+                user.FriendRequests.Add(new FriendRequest
+                {
+                     Content=$"{sender.UserName} send friend Request at {DateTime.Now.ToLongDateString()}",
+                      SenderId = sender.Id,
+                       CustomIdentityUser = sender
+                });
+
+                await _userManager.UpdateAsync(user);
+            }
+            return Ok();
+        }
+
+        public async Task<IActionResult> GetAllRequests()
+        {
+            var current = UserHelper.CurrentUser;
+            var currentUser = _context.Users.Include(nameof(CustomIdentityUser.FriendRequests)).FirstOrDefault(u => u.Id == current.Id);
+            var items = currentUser.FriendRequests;
+            return Ok(items);
+        }
 
     }
 }

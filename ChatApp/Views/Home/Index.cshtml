@@ -31,6 +31,7 @@
     </div>
 </div>
 <div class="row">
+    <div id="request"></div>
     <div class="col-12">
         <hr />
     </div>
@@ -42,31 +43,36 @@
 </div>
 
 <div class="row">
-    <div id="allUsers" class="col-md-10">
-@*
-    @foreach (var user in Model.AllUsers)
-    {
+    <div id="allUsers" class="col-md-10" style="display:flex;flex-direction:column;">
+        @*
+            @foreach (var user in Model.AllUsers)
+            {
             <div class="card" style="width: 14rem;">
-               
-                   
-              @if(user.IsOnline){
-                <img style="border:5px solid green;" class="card-img-top" src="~/images/@user.ImageUrl" alt="Card image cap">
 
-              }
-              else{
-                <img style="border:5px solid red;" class="card-img-top" src="~/images/@user.ImageUrl" alt="Card image cap">
 
-              }
+            @if(user.IsOnline){
+            <img style="border:5px solid green;" class="card-img-top" src="~/images/@user.ImageUrl" alt="Card image cap">
+
+            }
+            else{
+            <img style="border:5px solid red;" class="card-img-top" src="~/images/@user.ImageUrl" alt="Card image cap">
+
+            }
             <div class="card-body">
-                <h5 class="card-title">@user.UserName</h5>
-                <p class="card-text">@user.Email</p>
-                <a href="/home/FindCurrentUser/@user.Id" class="btn btn-primary">Go Chat</a>
+            <h5 class="card-title">@user.UserName</h5>
+            <p class="card-text">@user.Email</p>
+            <a href="/home/FindCurrentUser/@user.Id" class="btn btn-primary">Go Chat</a>
             </div>
-        </div>
-    }*@
+            </div>
+            }*@
     </div>
-     <div id="activeUsers" class="col-md-2">
+
+<div class="col-md-2">
+    <div id="requests">
     </div>
+    <div id="activeUsers">
+    </div>
+</div>
 </div>
 <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>

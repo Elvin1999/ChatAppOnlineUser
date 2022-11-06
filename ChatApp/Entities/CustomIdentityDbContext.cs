@@ -10,5 +10,7 @@ namespace ChatApp.Entities
         {
 
         }
+
+        public DbSet<FriendRequest> FriendRequests { get; set; }
     }
 }

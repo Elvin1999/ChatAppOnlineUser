@@ -27,7 +27,7 @@ function SendRequest(id) {
 
 
 
-function DeclineRequest(id,requestId) {
+function DeclineRequest(id, requestId) {
     $.ajax({
         url: "/Home/DeclineRequest?idSender=" + id + "&requestId=" + requestId,
         method: "GET",
@@ -127,6 +127,13 @@ function GetUsers() {
                 let content = "";
                 for (var i = 0; i < data.length; i++) {
                     let disconnectDate = new Date(data[i].disConnectTime);
+                    let subContent = ``;
+                    if (data[i].hasRequestPending) {
+                        subContent = ` <button class='btn btn-outline-primary' >Already Sent</button>`;
+                    }
+                    else {
+                        subContent = ` <button onclick="SendRequest('${data[i].id}')" class='btn btn-outline-primary' >Follow</button>`;
+                    }
 
                     let style = "";
                     let dateContent = "";
@@ -147,7 +154,7 @@ function GetUsers() {
             <div class='card-body'>
                 <h5 class='card-title'>${data[i].userName}</h5>
                 <p class='card-text'  >${data[i].email}</p>
-                <button onclick="SendRequest('${data[i].id}')" class='btn btn-outline-primary' >Follow</button>
+               ${subContent}
                 <p class='card-text mt-2'  >${dateContent}</p>
                  <div id='request' class='card-text' ></div>
                 </div>

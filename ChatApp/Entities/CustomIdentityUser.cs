@@ -16,6 +16,7 @@ namespace ChatApp.Entities
         public string ImageUrl { get; set; }
         public bool IsOnline { get; set; }
         public bool IsFriend { get; set; } = false;
+        public bool HasRequestPending { get; set; } = false;
         public DateTime DisConnectTime { get; set; } = DateTime.Now;
 
     }

@@ -6,12 +6,10 @@
 
 
 function SendRequest(id) {
-    alert("Send Request");
     $.ajax({
         url: "/Home/SendFollow/" + id,
         method: "GET",
         success: function (data) {
-            alert("Send Request success");
             let content = "";
             let item = `<div class="alert alert-success" role="alert">
   Your friend request sent successfully
@@ -26,6 +24,31 @@ function SendRequest(id) {
 
     });
 }
+
+
+
+function DeclineRequest(id,requestId) {
+    $.ajax({
+        url: "/Home/DeclineRequest?idSender=" + id + "&requestId=" + requestId,
+        method: "GET",
+        success: function (data) {
+            console.log(id);
+            let content = "";
+            let item = `<div class="alert alert-warning" role="alert">
+  You declined request successfully
+</div>`;
+            content += item;
+            $("#request").html(content);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+
+
+    });
+}
+
+
 
 function GetUsers() {
     setInterval(function () {
@@ -104,8 +127,7 @@ function GetUsers() {
                 let content = "";
                 for (var i = 0; i < data.length; i++) {
                     let disconnectDate = new Date(data[i].disConnectTime);
-                    console.log(data[i].disConnectTime);
-                    console.log(disconnectDate);
+
                     let style = "";
                     let dateContent = "";
                     if (data[i].isOnline) {
@@ -139,7 +161,7 @@ function GetUsers() {
         });
         GetRequests();
     }, 1000);
-   
+
 }
 
 function GetRequests() {
@@ -147,9 +169,16 @@ function GetRequests() {
         url: "/Home/GetAllRequests",
         method: "GET",
         success: function (data) {
-            console.log(data);
             let content = "";
+            let subContent = "";
             for (var i = 0; i < data.length; i++) {
+                if (data[i].status == "Request") {
+                    subContent = ` <div class="card-body">
+      <button onclick="" class='btn btn-outline-primary' >Accept</button>
+      <button onclick="DeclineRequest('${data[i].senderId}','${data[i].id}')" class='btn btn-outline-secondary' >Decline</button>
+  </div>`;
+                }
+
                 let item = `<div class="card" style="width: 15rem;">
   <div class="card-body">
     <h5 class="card-title">Friend Request </h5>
@@ -157,13 +186,13 @@ function GetRequests() {
   <ul class="list-group list-group-flush"> 
     <li class="list-group-item">${data[i].content}</li>
   </ul>
-  <div class="card-body">
-    <a href="#" class="btn btn-primary">Accept</a>
-    <a href="#" class="btn btn-primary">Decline</a>
-  </div>
+  ${subContent}
+
 </div>`;
                 content += item;
             }
+
+
             $("#requests").html(content);
         },
         error: function (err) {

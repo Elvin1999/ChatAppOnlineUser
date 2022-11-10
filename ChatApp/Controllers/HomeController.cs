@@ -83,7 +83,7 @@ namespace ChatApp.Controllers
                     item.IsOnline = true;
                 }
             }
-            return Ok(users);
+            return Ok(users.OrderByDescending(u=>u.IsOnline));
         }
 
         public async Task<IActionResult> SendFollow(string id)
@@ -96,7 +96,41 @@ namespace ChatApp.Controllers
                 {
                     Content = $"{sender.UserName} send friend Request at {DateTime.Now.ToLongDateString()}",
                     SenderId = sender.Id,
-                    CustomIdentityUser = sender
+                    CustomIdentityUser = sender,
+                    Status= "Request",
+                    ReceiverId = id
+                });
+
+                await _userManager.UpdateAsync(receiveruser);
+            }
+            return Ok();
+        }
+
+        public async Task<IActionResult> DeclineRequest(string idSender,int requestId)
+        {
+
+            var users = _context.Users.Include(nameof(CustomIdentityUser.FriendRequests));
+
+            var s = await _userManager.GetUserAsync(HttpContext.User);
+
+            var sender = users.FirstOrDefault(u => u.Id == s.Id);
+
+            var receiveruser = _userManager.Users.FirstOrDefault(u => u.Id == idSender);
+
+            var deleteRequest = sender.FriendRequests.FirstOrDefault(f => f.Id == requestId);
+            sender.FriendRequests.Remove(deleteRequest);
+
+            await _userManager.UpdateAsync(sender);
+
+            if (receiveruser != null)
+            {
+                receiveruser.FriendRequests.Add(new FriendRequest
+                {
+                    Content = $"{sender.UserName} decline friend Request at {DateTime.Now.ToLongDateString()}",
+                    SenderId = sender.Id,
+                    CustomIdentityUser = sender,
+                    Status = "Notification",
+                    ReceiverId = receiveruser.Id
                 });
 
                 await _userManager.UpdateAsync(receiveruser);
@@ -109,7 +143,7 @@ namespace ChatApp.Controllers
             var current = await _userManager.GetUserAsync(HttpContext.User);
             var users = _context.Users.Include(nameof(CustomIdentityUser.FriendRequests));
             var user = users.FirstOrDefault(u => u.Id == current.Id);
-            var items = user.FriendRequests.Where(r => r.SenderId != user.Id);
+            var items = user.FriendRequests.Where(r => r.ReceiverId== user.Id);
             return Ok(items);
         }
 

@@ -122,11 +122,12 @@ namespace ChatApp.Controllers
             if (receiveruser != null)
             {
 
+                var newsender = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == sender.Id);
                 receiveruser.FriendRequests.Add(new FriendRequest
                 {
                     Content = $"{sender.UserName} send friend Request at {DateTime.Now.ToLongDateString()}",
                     SenderId = sender.Id,
-                    CustomIdentityUser = sender,
+                    CustomIdentityUser = newsender,
                     Status = "Request",
                     ReceiverId = id
                 });

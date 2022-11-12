@@ -86,11 +86,16 @@ namespace ChatApp.Controllers
                     item.IsOnline = true;
                 }
 
-                var request = requests.FirstOrDefault(r => r.SenderId == user.Id);
+                var request = requests.FirstOrDefault(r => r.ReceiverId == item.Id && r.ReceiverId != r.SenderId && r.Status == "Request");
                 if (request != null)
                 {
                     item.HasRequestPending = true;
                 }
+                else
+                {
+                    item.HasRequestPending = false;
+                }
+
 
             }
             return Ok(users.OrderByDescending(u => u.IsOnline));
@@ -145,6 +150,9 @@ namespace ChatApp.Controllers
                     Status = "Notification",
                     ReceiverId = receiveruser.Id
                 });
+
+                receiveruser.HasRequestPending = false;
+
 
                 await _userManager.UpdateAsync(receiveruser);
             }

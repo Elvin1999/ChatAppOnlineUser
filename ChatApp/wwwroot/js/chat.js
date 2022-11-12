@@ -9,7 +9,7 @@ connection.on("ReceiveMessage", function (currentUser, message) {
 
     var li = document.createElement("li");
 
-    document.getElementById("messagesList").appendChild(li);
+    /*document.getElementById("messagesList").appendChild(li);*/
 
     let content = `<img src='/images/${currentUser.imageUrl}'  style='border-radius:50%;width:100px;height:100px;'`;
     content += `${currentUser.userName} says ${message}`;

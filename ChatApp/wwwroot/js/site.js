@@ -60,9 +60,9 @@ function GetUsers() {
                 let content = "";
                 for (var i = 0; i < data.length; i++) {
                     let item = `<div style='display:flex;' >
-                        <img  class='card-img-top' style='width:100px;height:100px;border-radius:50%;border:2px solid green;' src='/images/${data[i].imageUrl}' />
+                        <img  class='card-img-top' style='width:60px;height:60px;border-radius:50%;border:2px solid green;' src='/images/${data[i].imageUrl}' />
 
-                            <div class='card-body'>
+                            <div class='card-body m-2'>
                                 <h5 class='card-title'  >${data[i].userName}</h5>
                                 </div>
 

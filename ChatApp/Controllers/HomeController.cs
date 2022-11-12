@@ -84,6 +84,17 @@ namespace ChatApp.Controllers
             return Ok(UserHelper.ActiveUsers.DistinctBy(u => u.Id));
         }
 
+
+        public async Task<IActionResult> GetMyFriends()
+        {
+            var users = _userManager.Users.Include("Friends");
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var currentUser = users.FirstOrDefault(u => u.Id == user.Id);
+
+
+            return Ok(currentUser.Friends);
+        }
+
         public async Task<IActionResult> GetAllUsers()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -132,6 +143,44 @@ namespace ChatApp.Controllers
                     ReceiverId = id
                 });
 
+                await _userManager.UpdateAsync(receiveruser);
+            }
+            return Ok();
+        }
+
+        public async Task<IActionResult> AcceptRequest(string id, int requestId)
+        {
+            var users = _context.Users.Include(nameof(CustomIdentityUser.FriendRequests));
+
+            var s = await _userManager.GetUserAsync(HttpContext.User);
+
+            var sender = users.FirstOrDefault(u => u.Id == s.Id);
+
+            var receiveruser = _userManager.Users.FirstOrDefault(u => u.Id == id);
+
+            var deleteRequest = sender.FriendRequests.FirstOrDefault(f => f.Id == requestId);
+            sender.FriendRequests.Remove(deleteRequest);
+            _context.FriendRequests.Remove(deleteRequest);
+
+            await _userManager.UpdateAsync(sender);
+
+            if (receiveruser != null)
+            {
+                receiveruser.FriendRequests.Add(new FriendRequest
+                {
+                    Content = $"{sender.UserName} accept friend Request at {DateTime.Now.ToLongDateString()}",
+                    SenderId = sender.Id,
+                    CustomIdentityUser = sender,
+                    Status = "Notification",
+                    ReceiverId = receiveruser.Id
+                });
+
+                receiveruser.Friends.Add(sender);
+                sender.Friends.Add(receiveruser);
+
+                receiveruser.HasRequestPending = false;
+
+                await _userManager.UpdateAsync(sender);
                 await _userManager.UpdateAsync(receiveruser);
             }
             return Ok();

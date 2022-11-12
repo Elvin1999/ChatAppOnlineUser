@@ -49,6 +49,29 @@ function DeclineRequest(id, requestId) {
 }
 
 
+function AcceptRequest(id, requestId) {
+    $.ajax({
+        url: "/Home/AcceptRequest?id=" + id + "&requestId=" + requestId,
+        method: "GET",
+        success: function (data) {
+            console.log(id);
+            let content = "";
+            let item = `<div class="alert alert-warning" role="alert">
+  You accept request successfully
+</div>`;
+            content += item;
+            $("#request").html(content);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+
+
+    });
+}
+
+
+
 function DeleteRequest(id) {
     $.ajax({
         url: "/Home/DeleteRequest?id=" + id,
@@ -72,6 +95,32 @@ function DeleteRequest(id) {
 
 
 
+function GetMyFriends() {
+    $.ajax({
+        url: "/Home/GetMyFriends",
+        method: "GET",
+        success: function (data) {
+            let content = "";
+            for (var k = 0; k < data.length; k++) {
+                console.log(data);
+                content += `<div class='card' style='width:12rem;margin:5px;'>
+                    <img style='width:150px;height:150px;'  class='card-img-top' src='/images/${data[k].imageUrl}' alt='Card image cap' />
+            <div class='card-body'>
+                <h5 class='card-title'>${data[k].userName}</h5>
+                <button class='btn btn-outline-info' >UnFollow</button>
+                </div>
+</div>`;
+            }
+            console.log(content);
+            $("#friends").html(content);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+
+
+    });
+}
 
 
 function GetUsers() {
@@ -144,6 +193,8 @@ function GetUsers() {
                 </div>
 </div>`;
                     content += item;
+
+
                 }
                 $("#allUsers").html(content);
             }, error: function (err) {
@@ -151,6 +202,7 @@ function GetUsers() {
             }
         });
         GetRequests();
+        GetMyFriends();
     }, 1000);
 
 }
@@ -165,7 +217,7 @@ function GetRequests() {
             for (var i = 0; i < data.length; i++) {
                 if (data[i].status == "Request") {
                     subContent = ` <div class="card-body">
-      <button onclick="" class='btn btn-outline-primary' >Accept</button>
+      <button onclick="AcceptRequest('${data[i].senderId}','${data[i].id}')" class='btn btn-success' >Accept</button>
       <button onclick="DeclineRequest('${data[i].senderId}','${data[i].id}')" class='btn btn-outline-secondary' >Decline</button>
   </div>`;
                 }

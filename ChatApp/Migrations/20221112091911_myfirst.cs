@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ChatApp.Migrations
 {
-    public partial class INIT11 : Migration
+    public partial class myfirst : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,6 +30,10 @@ namespace ChatApp.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsOnline = table.Column<bool>(type: "bit", nullable: false),
+                    IsFriend = table.Column<bool>(type: "bit", nullable: false),
+                    HasRequestPending = table.Column<bool>(type: "bit", nullable: false),
+                    DisConnectTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomIdentityUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -48,6 +52,11 @@ namespace ChatApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_AspNetUsers_CustomIdentityUserId",
+                        column: x => x.CustomIdentityUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +166,28 @@ namespace ChatApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FriendRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomIdentityUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ReceiverId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FriendRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FriendRequests_AspNetUsers_CustomIdentityUserId",
+                        column: x => x.CustomIdentityUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Message",
                 columns: table => new
                 {
@@ -211,11 +242,21 @@ namespace ChatApp.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_CustomIdentityUserId",
+                table: "AspNetUsers",
+                column: "CustomIdentityUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FriendRequests_CustomIdentityUserId",
+                table: "FriendRequests",
+                column: "CustomIdentityUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_CustomIdentityUserId",
@@ -239,6 +280,9 @@ namespace ChatApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "FriendRequests");
 
             migrationBuilder.DropTable(
                 name: "Message");

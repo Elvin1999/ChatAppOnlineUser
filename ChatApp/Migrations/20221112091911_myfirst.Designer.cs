@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.Migrations
 {
     [DbContext(typeof(CustomIdentityDbContext))]
-    [Migration("20221110164755_RequestPending")]
-    partial class RequestPending
+    [Migration("20221112091911_myfirst")]
+    partial class myfirst
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

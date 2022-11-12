@@ -54,6 +54,19 @@ namespace ChatApp.Controllers
             UserHelper.ReceiverUser = _userManager.Users.FirstOrDefault(u => u.Id == id);
             return RedirectToAction("MessageChat");
         }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRequest(int id)
+        {
+            var request=_context.FriendRequests.FirstOrDefault(u => u.Id == id);
+            if (request != null)
+            {
+                _context.FriendRequests.Remove(request);
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            return BadRequest();
+        }
 
         public IActionResult MessageChat()
         {

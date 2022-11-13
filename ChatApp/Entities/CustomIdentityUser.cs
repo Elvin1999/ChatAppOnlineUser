@@ -7,11 +7,11 @@ namespace ChatApp.Entities
         public CustomIdentityUser()
         {
             Messages = new List<Message>();
-            Friends = new List<CustomIdentityUser>();
+            Friends = new List<Friend>();
             FriendRequests = new List<FriendRequest>();
         }
         public virtual ICollection<Message> Messages { get; set; }
-        public List<CustomIdentityUser> Friends { get; set; }
+        public List<Friend> Friends { get; set; }
         public virtual ICollection<FriendRequest> FriendRequests { get; set; }
         public string ImageUrl { get; set; }
         public bool IsOnline { get; set; }

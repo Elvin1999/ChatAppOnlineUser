@@ -103,11 +103,12 @@ function GetMyFriends() {
             let content = "";
             for (var k = 0; k < data.length; k++) {
                 console.log(data);
-                content += `<div class='card' style='width:12rem;margin:5px;'>
-                    <img style='width:150px;height:150px;'  class='card-img-top' src='/images/${data[k].imageUrl}' alt='Card image cap' />
+                content += `<div class='card' style='width:17rem;margin:5px;'>
+                    <img style='width:270px;height:250px;'  class='card-img-top' src='/images/${data[k].yourFriend.imageUrl}' alt='Card image cap' />
             <div class='card-body'>
-                <h5 class='card-title'>${data[k].userName}</h5>
+                <h5 class='card-title'>${data[k].yourFriend.userName}</h5>
                 <button class='btn btn-outline-info' >UnFollow</button>
+                <button class='btn btn-outline-info' >Send Message</button>
                 </div>
 </div>`;
             }

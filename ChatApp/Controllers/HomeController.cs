@@ -90,7 +90,7 @@ namespace ChatApp.Controllers
             var users = _userManager.Users.Include("Friends");
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var currentUser = users.FirstOrDefault(u => u.Id == user.Id);
-
+            currentUser.Friends = _context.Friends.Include("YourFriend").Where(f => f.OwnId== currentUser.Id).ToList();
 
             return Ok(currentUser.Friends);
         }
@@ -99,8 +99,10 @@ namespace ChatApp.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
+            var myFriends= _context.Friends.Include("YourFriend").Where(f => f.OwnId == user.Id).ToList();
 
-            var users = _userManager.Users.Where(u => u.Id != user.Id && !user.Friends.Contains(u));
+            var users = _userManager.Users.Where(u => u.Id != user.Id).ToList();
+
 
             var requests = _context.FriendRequests.ToList();
             foreach (var item in users)
@@ -120,7 +122,6 @@ namespace ChatApp.Controllers
                 {
                     item.HasRequestPending = false;
                 }
-
 
             }
             return Ok(users.OrderByDescending(u => u.IsOnline));
@@ -175,11 +176,27 @@ namespace ChatApp.Controllers
                     Status = "Notification",
                     ReceiverId = receiveruser.Id
                 });
+                var receiverFriend = new Friend
+                {
+                    OwnId = receiveruser.Id,
+                    YourFriendId = sender.Id,
+                };
+                _context.Friends.Add(receiverFriend);
 
-                receiveruser.Friends.Add(sender);
-                sender.Friends.Add(receiveruser);
+                var senderFriend = new Friend
+                {
+                    OwnId = sender.Id,
+                    YourFriendId = receiveruser.Id,
+                };
+
+                receiveruser.Friends.Add(senderFriend);
+                sender.Friends.Add(receiverFriend);
+
+                _context.Friends.Add(senderFriend);
 
                 receiveruser.HasRequestPending = false;
+
+                await _context.SaveChangesAsync();
 
                 await _userManager.UpdateAsync(sender);
                 await _userManager.UpdateAsync(receiveruser);

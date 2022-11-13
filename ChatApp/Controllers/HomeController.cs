@@ -57,7 +57,7 @@ namespace ChatApp.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteRequest(int id)
         {
-            var request=_context.FriendRequests.FirstOrDefault(u => u.Id == id);
+            var request = _context.FriendRequests.FirstOrDefault(u => u.Id == id);
             if (request != null)
             {
                 _context.FriendRequests.Remove(request);
@@ -100,7 +100,8 @@ namespace ChatApp.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
 
-            var users = _userManager.Users.Where(u => u.Id != user.Id);
+            var users = _userManager.Users.Where(u => u.Id != user.Id && !user.Friends.Contains(u));
+
             var requests = _context.FriendRequests.ToList();
             foreach (var item in users)
             {

@@ -81,6 +81,7 @@ namespace ChatApp.Controllers
                     SenderId = request.OwnId,
                     Content = "You unfollowed by your friend",
                 });
+
                 var request2 = _context.Friends.FirstOrDefault(u => u.OwnId == request.YourFriendId);
                 _context.Friends.Remove(request);
                 _context.Friends.Remove(request2);
@@ -139,6 +140,7 @@ namespace ChatApp.Controllers
                 if (onlineUser != null)
                 {
                     item.IsOnline = true;
+                    item.ConnectTime=onlineUser.ConnectTime;    
                 }
 
                 var request = requests.FirstOrDefault(r => r.ReceiverId == item.Id && r.ReceiverId != r.SenderId && r.Status == "Request");

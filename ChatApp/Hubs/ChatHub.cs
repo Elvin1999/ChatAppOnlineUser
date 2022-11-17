@@ -27,6 +27,7 @@ namespace ChatApp.Hubs
         public override async Task OnConnectedAsync()
         {
             var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+            user.ConnectTime = DateTime.Now.ToShortTimeString();
             UserHelper.ActiveUsers.Add(user);
             string info = user.UserName + " connected Succesfully";
             await Clients.Others.SendAsync("Connect","");

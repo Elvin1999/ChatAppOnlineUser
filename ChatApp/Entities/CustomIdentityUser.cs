@@ -18,6 +18,7 @@ namespace ChatApp.Entities
         public bool IsFriend { get; set; } = false;
         public bool HasRequestPending { get; set; } = false;
         public DateTime DisConnectTime { get; set; } = DateTime.Now;
+        public string ConnectTime { get; set; }
 
     }
 }

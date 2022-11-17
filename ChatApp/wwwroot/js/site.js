@@ -93,6 +93,27 @@ function DeleteRequest(id) {
     });
 }
 
+function UnFollow(id) {
+    $.ajax({
+        url: "/Home/UnFollow?id=" + id,
+        method: "GET",
+        success: function (data) {
+            console.log(id);
+            let content = "";
+            let item = `<div class="alert alert-warning" role="alert">
+  You unfollow friend successfully
+</div>`;
+            content += item;
+            $("#request").html(content);
+        },
+        error: function (err) {
+            console.log(err);
+        }
+
+
+    });
+}
+
 
 
 function GetMyFriends() {
@@ -107,7 +128,7 @@ function GetMyFriends() {
                     <img style='width:270px;height:250px;'  class='card-img-top' src='/images/${data[k].yourFriend.imageUrl}' alt='Card image cap' />
             <div class='card-body'>
                 <h5 class='card-title'>${data[k].yourFriend.userName}</h5>
-                <button class='btn btn-outline-info' >UnFollow</button>
+                <button onclick="UnFollow('${data[k].id}')" class='btn btn-outline-info'  >UnFollow</button>
                 <button class='btn btn-outline-info' >Send Message</button>
                 </div>
 </div>`;

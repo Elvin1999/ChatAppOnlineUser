@@ -68,6 +68,30 @@ namespace ChatApp.Controllers
             return BadRequest();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> UnFollow(int id)
+        {
+            var request = _context.Friends.FirstOrDefault(u => u.Id == id);
+            if (request != null)
+            {
+                _context.FriendRequests.Add(new FriendRequest
+                {
+                    Status = "Notification",
+                    ReceiverId = request.YourFriendId,
+                    SenderId = request.OwnId,
+                    Content = "You unfollowed by your friend",
+                });
+                var request2 = _context.Friends.FirstOrDefault(u => u.OwnId == request.YourFriendId);
+                _context.Friends.Remove(request);
+                _context.Friends.Remove(request2);
+
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            return BadRequest();
+        }
+
         public IActionResult MessageChat()
         {
             var model = new ChatModel
@@ -90,7 +114,7 @@ namespace ChatApp.Controllers
             var users = _userManager.Users.Include("Friends");
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var currentUser = users.FirstOrDefault(u => u.Id == user.Id);
-            currentUser.Friends = _context.Friends.Include("YourFriend").Where(f => f.OwnId== currentUser.Id).ToList();
+            currentUser.Friends = _context.Friends.Include("YourFriend").Where(f => f.OwnId == currentUser.Id).ToList();
 
             return Ok(currentUser.Friends);
         }
@@ -99,12 +123,16 @@ namespace ChatApp.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
-            var myFriends= _context.Friends.Include("YourFriend").Where(f => f.OwnId == user.Id).ToList();
+            var myFriends = _context.Friends.Include("YourFriend").Where(f => f.OwnId == user.Id).ToList();
 
             var users = _userManager.Users.Where(u => u.Id != user.Id).ToList();
 
-
             var requests = _context.FriendRequests.ToList();
+            foreach (var f in myFriends)
+            {
+                var data = users.FirstOrDefault(u => u.Id == f.YourFriendId);
+                users.Remove(data);
+            }
             foreach (var item in users)
             {
                 var onlineUser = UserHelper.ActiveUsers.FirstOrDefault(u => u.Id == item.Id);
@@ -149,6 +177,8 @@ namespace ChatApp.Controllers
             }
             return Ok();
         }
+
+
 
         public async Task<IActionResult> AcceptRequest(string id, int requestId)
         {

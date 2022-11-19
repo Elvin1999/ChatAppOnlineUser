@@ -133,7 +133,7 @@ function GetMyFriends() {
 </div>
             <div class='card-body'>
                 <button onclick="UnFollow('${data[k].id}')" class='btn btn-outline-info'  >UnFollow</button>
-                <button class='btn btn-outline-info' >Send Message</button>
+                <a class='btn btn-outline-info' href="/Home/GoChat/${data[k].yourFriendId}" >Send Message</a>
                 </div>
 </div>`;
             }

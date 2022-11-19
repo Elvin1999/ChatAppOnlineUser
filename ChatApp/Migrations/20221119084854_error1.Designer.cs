@@ -4,6 +4,7 @@ using ChatApp.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChatApp.Migrations
 {
     [DbContext(typeof(CustomIdentityDbContext))]
-    partial class CustomIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221119084854_error1")]
+    partial class error1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,29 +23,6 @@ namespace ChatApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("ChatApp.Entities.Chat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.ToTable("Chats");
-                });
 
             modelBuilder.Entity("ChatApp.Entities.CustomIdentityRole", b =>
                 {
@@ -222,34 +201,27 @@ namespace ChatApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CustomIdentityUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReceiverId")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SenderId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChatId");
-
                     b.HasIndex("CustomIdentityUserId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -358,17 +330,6 @@ namespace ChatApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ChatApp.Entities.Chat", b =>
-                {
-                    b.HasOne("ChatApp.Entities.CustomIdentityUser", "Receiver")
-                        .WithMany("Chats")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-                });
-
             modelBuilder.Entity("ChatApp.Entities.Friend", b =>
                 {
                     b.HasOne("ChatApp.Entities.CustomIdentityUser", "YourFriend")
@@ -391,17 +352,13 @@ namespace ChatApp.Migrations
 
             modelBuilder.Entity("ChatApp.Entities.Message", b =>
                 {
-                    b.HasOne("ChatApp.Entities.Chat", "Chat")
+                    b.HasOne("ChatApp.Entities.CustomIdentityUser", "CustomIdentityUser")
                         .WithMany("Messages")
-                        .HasForeignKey("ChatId")
+                        .HasForeignKey("CustomIdentityUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ChatApp.Entities.CustomIdentityUser", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("CustomIdentityUserId");
-
-                    b.Navigation("Chat");
+                    b.Navigation("CustomIdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -455,15 +412,8 @@ namespace ChatApp.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ChatApp.Entities.Chat", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
             modelBuilder.Entity("ChatApp.Entities.CustomIdentityUser", b =>
                 {
-                    b.Navigation("Chats");
-
                     b.Navigation("FriendRequests");
 
                     b.Navigation("Friends");

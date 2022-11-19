@@ -11,6 +11,7 @@ namespace ChatApp.Entities
             FriendRequests = new List<FriendRequest>();
         }
         public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<Chat> Chats  { get; set; }
         public List<Friend> Friends { get; set; }
         public virtual ICollection<FriendRequest> FriendRequests { get; set; }
         public string ImageUrl { get; set; }
@@ -18,7 +19,7 @@ namespace ChatApp.Entities
         public bool IsFriend { get; set; } = false;
         public bool HasRequestPending { get; set; } = false;
         public DateTime DisConnectTime { get; set; } = DateTime.Now;
-        public string ConnectTime { get; set; }
+        public string ConnectTime { get; set; } = "";
 
     }
 }

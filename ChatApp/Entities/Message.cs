@@ -5,11 +5,11 @@ namespace ChatApp.Entities
     public class Message
     {
         public int Id { get; set; }
-        [Required]
-        public string UserName { get; set; }
-        [Required]
-        public string Text { get; set; }
-        public string UserId { get; set; }
-        public virtual CustomIdentityUser CustomIdentityUser { get; set; }
+        public string Content { get; set; }
+        public DateTime DateTime { get; set; }
+        public string ReceiverId { get; set; }
+        public string SenderId { get; set; }
+        public int ChatId { get; set; }
+        public virtual Chat Chat { get; set; }
     }
 }

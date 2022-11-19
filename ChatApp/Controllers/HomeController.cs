@@ -72,9 +72,10 @@ namespace ChatApp.Controllers
         public async Task<IActionResult> UnFollow(int id)
         {
             var request = _context.Friends.FirstOrDefault(u => u.Id == id);
+            var receiverUser = _userManager.Users.FirstOrDefault(u => u.Id == request.YourFriendId);
             if (request != null)
             {
-                _context.FriendRequests.Add(new FriendRequest
+                receiverUser.FriendRequests.Add(new FriendRequest
                 {
                     Status = "Notification",
                     ReceiverId = request.YourFriendId,
@@ -85,7 +86,7 @@ namespace ChatApp.Controllers
                 var request2 = _context.Friends.FirstOrDefault(u => u.OwnId == request.YourFriendId);
                 _context.Friends.Remove(request);
                 _context.Friends.Remove(request2);
-
+                await _userManager.UpdateAsync(receiverUser);
                 await _context.SaveChangesAsync();
 
                 return Ok();
@@ -102,7 +103,36 @@ namespace ChatApp.Controllers
             };
             return View(model);
         }
+        [HttpGet]
+        public async Task<IActionResult> GoChat(string id)
+        {
+            var users = _userManager.Users.Include("Chats");
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var currentUser = users.FirstOrDefault(u => u.Id == user.Id);
 
+
+            var chats = _context.Chats.Include("Messages").Where(c => c.SenderId == currentUser.Id).ToList();
+
+            var receiver = await users.FirstOrDefaultAsync(u => u.Id == id);
+            if (chats == null)
+            {
+                chats = new List<Chat>();
+            }
+            var chat = chats.FirstOrDefault(c => c.SenderId == currentUser.Id && c.ReceiverId == id);
+            var messages = chat?.Messages;
+            var viewModel = new ChatViewModel
+            {
+               Chats=chats,
+               ChatCurrent=new Chat
+               {
+                    Messages=messages,
+                     Receiver=receiver,
+                      ReceiverId=receiver.Id,
+                       SenderId=currentUser.Id
+               }
+            };
+            return View(viewModel);
+        }
 
         public async Task<IActionResult> GetAllActiveUsers()
         {

@@ -111,15 +111,19 @@ namespace ChatApp.Controllers
             var currentUser = users.FirstOrDefault(u => u.Id == user.Id);
 
 
-            var chats = _context.Chats.Include("Messages").Where(c => c.SenderId == currentUser.Id).ToList();
+            var chats = _context.Chats.Include("Messages").Where(c => c.SenderId == currentUser.Id || c.ReceiverId==currentUser.Id).ToList();
 
             var receiver = await users.FirstOrDefaultAsync(u => u.Id == id);
             if (chats == null)
             {
                 chats = new List<Chat>();
             }
-            var chat = chats.FirstOrDefault(c => c.SenderId == currentUser.Id && c.ReceiverId == id);
-            var messages = chat?.Messages;
+            var chat = chats.FirstOrDefault(c => c.SenderId == currentUser.Id && c.ReceiverId == id || c.ReceiverId == currentUser.Id && c.SenderId == id);
+            var messages = chat.Messages;
+            if (messages == null)
+            {
+                messages = new List<Message>();
+            }
             var viewModel = new ChatViewModel
             {
                Chats=chats,

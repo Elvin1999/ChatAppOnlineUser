@@ -79,7 +79,7 @@
                         </div>
                     </div>
                     <div class="chat-history">
-                        <ul class="m-b-0">
+                        <ul id="userMessages" class="m-b-0">
                             @foreach (var item in Model.ChatCurrent.Messages)
                             {
 
@@ -111,7 +111,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fa fa-send"></i></span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Enter text here...">
+                            <input id="messageBox" type="text" class="form-control" placeholder="Enter text here...">
+                            <button class="btn btn-primary" onclick="SendMessageUser('@Model.ChatCurrent.ReceiverId','@Model.ChatCurrent.SenderId')" >Send Message</button>
                         </div>
                     </div>
                 </div>
@@ -119,3 +120,7 @@
         </div>
     </div>
 </div>
+
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+<script src="~/js/site.js"></script>

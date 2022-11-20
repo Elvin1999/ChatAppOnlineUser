@@ -13,6 +13,10 @@ connection.start().then(function () {
 
 connection.on("ReceiveMessage", function (date, message, current, receiver) {
 
+    let src = '/js/sound.mp3';
+    let audio = new Audio(src);
+    audio.play();
+
     var li = document.createElement("li");
 
     document.getElementById("userMessages").appendChild(li);

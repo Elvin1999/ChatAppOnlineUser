@@ -11,18 +11,30 @@ connection.start().then(function () {
 //Disable the send button until connection is established.
 
 
-connection.on("ReceiveMessage", function (date, message) {
+connection.on("ReceiveMessage", function (date, message, current, receiver) {
 
     var li = document.createElement("li");
 
     document.getElementById("userMessages").appendChild(li);
+    let content = ``;
+    if (receiver == current) {
 
-    let content = ` <li class="clearfix">
+        content = ` <li class="clearfix">
                                         <div class="message-data text-right">
                                             <span class="message-data-time">${date}</span>
                                         </div>
                                         <div class="message other-message float-right"> ${message} </div>
                                     </li>`;
+    }
+    else {
+        content = ` <li class="clearfix">
+                                        <div class="message-data">
+                                            <span class="message-data-time">${date}</span>
+                                        </div>
+                                        <div class="message my-message"> ${message} </div>
+                                    </li>`;
+    }
+
     li.innerHTML = content;
 
 });
@@ -65,14 +77,14 @@ function SendMessageUser(receiverId, senderId) {
 }
 
 
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = "";
-    var message = document.getElementById("messageInput").value;
+//document.getElementById("sendButton").addEventListener("click", function (event) {
+//    var user = "";
+//    var message = document.getElementById("messageInput").value;
 
-    connection.invoke("SendMessage", user, message).catch(function (err) {
-        return console.error(err.toString());
-    })
+//    connection.invoke("SendMessage", user, message).catch(function (err) {
+//        return console.error(err.toString());
+//    })
 
-    event.preventDefault();
+//    event.preventDefault();
 
-});
+//});

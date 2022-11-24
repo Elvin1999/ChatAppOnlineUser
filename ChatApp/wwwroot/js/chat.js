@@ -74,6 +74,7 @@ function SendMessageUser(receiverId, senderId) {
     connection.invoke("SendMessageUser", senderId, receiverId, message.value).catch(function (err) {
         return console.error(err.toString());
     })
+    message.value = "";
 
     event.preventDefault();
 

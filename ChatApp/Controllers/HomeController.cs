@@ -121,9 +121,18 @@ namespace ChatApp.Controllers
             var chat = chats.FirstOrDefault(c => c.SenderId == currentUser.Id && c.ReceiverId == id || c.ReceiverId == currentUser.Id && c.SenderId == id);
             if (chat == null)
             {
-                chat = new Chat();
+                chat = new Chat
+                {
+                    ReceiverId = id,
+                    SenderId = currentUser.Id
+                };
             }
             var messages = chat.Messages;
+            messages.Where(m=>m.SenderId==currentUser.Id).ToList().ForEach(m => m.HasSeen = true);
+
+            _context.Update(chat);
+            await _context.SaveChangesAsync();
+
             var viewModel = new ChatViewModel
             {
                Chats=chats,
@@ -146,12 +155,33 @@ namespace ChatApp.Controllers
 
         public async Task<IActionResult> GetMyFriends()
         {
-            var users = _userManager.Users.Include("Friends");
+            var users = _userManager.Users.Include("Chats").Include("Friends");
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var currentUser = users.FirstOrDefault(u => u.Id == user.Id);
+
+            var chats = _context.Chats.Include("Messages").Where(c => c.SenderId == currentUser.Id || c.ReceiverId == currentUser.Id).ToList();
+
+            //var chat = chats.FirstOrDefault(c => c.SenderId == currentUser.Id && c.ReceiverId == id || c.ReceiverId == currentUser.Id && c.SenderId == id);
             currentUser.Friends = _context.Friends.Include("YourFriend").Where(f => f.OwnId == currentUser.Id).ToList();
 
-            return Ok(currentUser.Friends);
+            var friendModels = currentUser.Friends.Select(f =>
+            {
+                var chat = chats.FirstOrDefault(c => c.SenderId == currentUser.Id && c.ReceiverId == f.YourFriendId || c.ReceiverId == currentUser.Id && c.SenderId == f.YourFriendId);
+                var model= new FriendModel
+                {
+                    Id = f.Id,
+                    OwnId = f.OwnId,
+                    YourFriend = f.YourFriend,
+                    YourFriendId = f.YourFriendId,
+                };
+                if(chat != null)
+                {
+                    model.LastMessageCount = chat.Messages.Where(m=>m.HasSeen==false && currentUser.Id==m.SenderId).Count();
+                }
+                return model;
+            });
+
+            return Ok(friendModels);
         }
 
         public async Task<IActionResult> GetAllUsers()

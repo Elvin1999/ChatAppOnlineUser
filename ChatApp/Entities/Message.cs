@@ -11,5 +11,6 @@ namespace ChatApp.Entities
         public string SenderId { get; set; }
         public int ChatId { get; set; }
         public virtual Chat Chat { get; set; }
+        public bool HasSeen { get; set; } = false;
     }
 }

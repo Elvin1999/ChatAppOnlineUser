@@ -123,12 +123,17 @@ function GetMyFriends() {
         success: function (data) {
             let content = "";
             for (var k = 0; k < data.length; k++) {
-                console.log(data);
+                let subContent = "";
+                if (data[k].lastMessageCount > 0) {
+                    subContent = `<span style='background-color:#00bfff;' class="badge">${data[k].lastMessageCount}</span></h6>`;
+                }
                 content += `<div class='card' style='width:17rem;margin:5px;'>
                 <div style='display:flex;flex-direction:row;'>
                     <img style='width:80px;height:80px;'  class='card-img-top' src='/images/${data[k].yourFriend.imageUrl}' alt='Card image cap' />
 
-                <h6 class='card-title text-success' style='margin-top:30px;margin-left:3px;'>${data[k].yourFriend.userName}</h6>
+                <h6 class='card-title text-success' style='margin-top:30px;margin-left:3px;'>${data[k].yourFriend.userName}
+
+         ${subContent}
                 <h4 class='card-title text-info' style='margin-top:30px;margin-left:3px;'></h6>
 </div>
             <div class='card-body'>
@@ -254,8 +259,8 @@ function GetRequests() {
       <button onclick="DeclineRequest('${data[i].senderId}','${data[i].id}')" class='btn btn-outline-secondary' >Decline</button>
   </div>`;
                 }
-                else{
-                    
+                else {
+
                     subContent = ` <div class="card-body">
       <button onclick="DeleteRequest('${data[i].id}')" class='btn btn-warning' >Delete</button>
   </div>`;

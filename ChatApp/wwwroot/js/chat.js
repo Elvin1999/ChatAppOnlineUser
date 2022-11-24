@@ -80,6 +80,22 @@ function SendMessageUser(receiverId, senderId) {
 
 
 }
+//fikirleshmek lazimdiki siz nece shekli otureceksiz
+function SendImageMessageUser(receiverId, senderId) {
+    console.log("Message");
+    console.log(receiverId + "   " + senderId);
+
+    let message = document.getElementById("messageBox");
+
+    connection.invoke("SendMessageUser", senderId, receiverId, message.value).catch(function (err) {
+        return console.error(err.toString());
+    })
+    message.value = "";
+
+    event.preventDefault();
+
+
+}
 
 
 //document.getElementById("sendButton").addEventListener("click", function (event) {

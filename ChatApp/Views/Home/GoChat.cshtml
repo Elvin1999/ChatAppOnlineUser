@@ -82,14 +82,27 @@
                         <ul id="userMessages" class="m-b-0">
                             @foreach (var item in Model.ChatCurrent.Messages)
                             {
-
-                                if (item.SenderId == Model.ChatCurrent.SenderId)
+                                if (item.ReceiverId != Model.ChatCurrent.ReceiverId)
                                 {
+
+                                    var image = "";
+                                    if (item.HasSeen)
+                                    {
+                                        image = "blue.png";
+                                    }
+                                    else
+                                    {
+                                        image = "gray.png";
+                                    }
                                     <li class="clearfix">
                                         <div class="message-data text-right">
                                             <span class="message-data-time">@item.DateTime</span>
                                         </div>
-                                        <div class="message other-message float-right"> @item.Content </div>
+                                        <div class="message other-message float-right">
+                                            @item.Content<span>
+                                                <img style="width:25px;height:25px;" src="~/images/@image"></img>
+                                            </span>
+                                        </div>
                                     </li>
                                 }
                                 else
@@ -98,12 +111,15 @@
                                         <div class="message-data">
                                             <span class="message-data-time">@item.DateTime</span>
                                         </div>
-                                        <div class="message my-message">@item.Content</div>
+                                        <div class="message my-message">
+                                            @item.Content
+                                            
+                                        </div>
                                     </li>
                                 }
                             }
 
-                        
+
                         </ul>
                     </div>
                     <div class="chat-message clearfix">
@@ -112,7 +128,7 @@
                                 <span class="input-group-text"><i class="fa fa-send"></i></span>
                             </div>
                             <input id="messageBox" type="text" class="form-control" placeholder="Enter text here...">
-                            <button class="btn btn-primary" onclick="SendMessageUser('@Model.ChatCurrent.ReceiverId','@Model.ChatCurrent.SenderId')" >Send Message</button>
+                            <button class="btn btn-primary" onclick="SendMessageUser('@Model.ChatCurrent.ReceiverId','@Model.ChatCurrent.SenderId')">Send Message</button>
                         </div>
                     </div>
                 </div>
